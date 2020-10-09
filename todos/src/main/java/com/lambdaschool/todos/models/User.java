@@ -1,5 +1,4 @@
 package com.lambdaschool.todos.models;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -26,7 +25,7 @@ public class User extends Auditable
      * The username (String). Cannot be null and must be unique
      */
     @Column(nullable = false,
-        unique = true)
+            unique = true)
     private String username;
 
     /**
@@ -40,9 +39,13 @@ public class User extends Auditable
      * Primary email account of user. Could be used as the userid. Cannot be null and must be unique.
      */
     @Column(nullable = false,
-        unique = true)
+            unique = true)
     @Email
     private String primaryemail;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties(value = "user")
+    private List<Todos> todos = new ArrayList<>();
 
     /**
      * Default constructor used primarily by the JPA.
@@ -60,13 +63,9 @@ public class User extends Auditable
      * @param password     The password (String) of the user
      * @param primaryemail The primary email (String) of the user
      */
-    public User(
-        String username,
-        String password,
-        String primaryemail)
-    {
-        setUsername(username);
-        setPassword(password);
+    public User(String username, String password, @Email String primaryemail) {
+        this.username = username;
+        this.password = password;
         this.primaryemail = primaryemail;
     }
 
@@ -160,5 +159,13 @@ public class User extends Auditable
     public void setPassword(String password)
     {
         this.password = password;
+    }
+
+    public List<Todos> getTodos() {
+        return todos;
+    }
+
+    public void setTodos(List<Todos> todos) {
+        this.todos = todos;
     }
 }
